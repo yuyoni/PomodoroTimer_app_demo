@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'dart:async';
-import 'package:sprintf/sprintf.dart';
+import 'package:flutter_pomodoro_timer/tools/utils.dart';
 
 enum TimerStatus { running, paused, stopped, resting }
 
@@ -30,23 +30,18 @@ class _TimerScreenState extends State<TimerScreen> {
     super.initState();
     //_timerStatus의 초기상태는 정지
     _timerStatus = TimerStatus.stopped;
-    print(_timerStatus.toString());
+    showToast(_timerStatus.toString());
     //_timer의 초기상태는 WORK_SECONDS
     _timer = WORK_SECONDS;
     //_pomodoroCount의 초기상태는 0
     _pomodoroCount = 0;
   }
 
-  //시간 표시를 위해 문자열 포맷팅함수 sprintf를 이용
-  String secondsToString(int seconds) {
-    return sprintf("%02d:%02d", [seconds ~/ 60, seconds % 60]);
-  }
-
   // 이벤트 5가지 : run, rest, pause, resume, stop
   void run() {
     setState(() {
       _timerStatus = TimerStatus.running;
-      print("[=>] " + _timerStatus.toString());
+      showToast("[=>] " + _timerStatus.toString());
       runTimer(); // 타이머 실행 함수
     });
   }
@@ -55,14 +50,14 @@ class _TimerScreenState extends State<TimerScreen> {
     setState(() {
       _timer = REST_SECONDS;
       _timerStatus = TimerStatus.resting;
-      print("[=>] " + _timerStatus.toString());
+      showToast("[=>] " + _timerStatus.toString());
     });
   }
 
   void pause() {
     setState(() {
       _timerStatus = TimerStatus.paused;
-      print("[=>] " + _timerStatus.toString());
+      showToast("[=>] " + _timerStatus.toString());
     });
   }
 
@@ -74,7 +69,7 @@ class _TimerScreenState extends State<TimerScreen> {
     setState(() {
       _timer = WORK_SECONDS;
       _timerStatus = TimerStatus.stopped;
-      print("[=>] " + _timerStatus.toString());
+      showToast("[=>] " + _timerStatus.toString());
     });
   }
 
@@ -93,7 +88,7 @@ class _TimerScreenState extends State<TimerScreen> {
         // running 일때 : _timer를 1씩 감소하고 _timer가 0이면 rest()메서드 실행
         case TimerStatus.running:
           if (_timer <= 0) {
-            print("작업 완료");
+            showToast("작업 완료");
             rest();
           } else {
             setState(() {
@@ -107,7 +102,7 @@ class _TimerScreenState extends State<TimerScreen> {
             setState(() {
               _pomodoroCount += 1;
             });
-            print("오늘 $_pomodoroCount 개의 뽀모도로를 달성했습니다.");
+            showToast("오늘 $_pomodoroCount 개의 뽀모도로를 달성했습니다.");
             t.cancel();
             stop();
           } else {
