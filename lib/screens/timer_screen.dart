@@ -14,8 +14,8 @@ class TimerScreen extends StatefulWidget {
 
 class _TimerScreenState extends State<TimerScreen> {
   // 상태변수 1. 타이머 시간
-  static const WORK_SECONDS = 25;
-  static const REST_SECONDS = 5;
+  static const WORK_MINUTES = 25 * 60;
+  static const REST_MINUTES = 5 * 60;
 
   // 상태변수 2. 타이머 Status
   late TimerStatus _timerStatus;
@@ -31,8 +31,8 @@ class _TimerScreenState extends State<TimerScreen> {
     //_timerStatus의 초기상태는 정지
     _timerStatus = TimerStatus.stopped;
     print(_timerStatus.toString());
-    //_timer의 초기상태는 WORK_SECONDS
-    _timer = WORK_SECONDS;
+    //_timer의 초기상태는 WORK_MINUTES
+    _timer = WORK_MINUTES;
     //_pomodoroCount의 초기상태는 0
     _pomodoroCount = 0;
   }
@@ -48,7 +48,7 @@ class _TimerScreenState extends State<TimerScreen> {
 
   void rest() {
     setState(() {
-      _timer = REST_SECONDS;
+      _timer = REST_MINUTES;
       _timerStatus = TimerStatus.resting;
       print("[=>] " + _timerStatus.toString());
     });
@@ -67,7 +67,7 @@ class _TimerScreenState extends State<TimerScreen> {
 
   void stop() {
     setState(() {
-      _timer = WORK_SECONDS;
+      _timer = WORK_MINUTES;
       _timerStatus = TimerStatus.stopped;
       print("[=>] " + _timerStatus.toString());
     });
