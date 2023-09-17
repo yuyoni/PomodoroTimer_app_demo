@@ -1,6 +1,9 @@
 // lib/screens/timer_screen.dart
 
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+enum TimerStatus { running, paused, stopped, resting }
 
 class TimerScreen extends StatefulWidget {
   @override
@@ -8,6 +11,110 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
+  // 상태변수 1. 타이머 시간
+  static const WORK_SECONDS = 25;
+  static const REST_SECONDS = 5;
+
+  // 상태변수 2. 타이머 Status
+  late TimerStatus _timerStatus;
+  late int _timer;
+
+  //상태변수 3. 뽀모도로 횟수
+  late int _pomodoroCount;
+
+  //상태의 초기값 설정하기 위해 initState()메서드를 오버라이드
+  @override
+  void initState() {
+    super.initState();
+    //_timerStatus의 초기상태는 정지
+    _timerStatus = TimerStatus.stopped;
+    print(_timerStatus.toString());
+    //_timer의 초기상태는 WORK_SECONDS
+    _timer = WORK_SECONDS;
+    //_pomodoroCount의 초기상태는 0
+    _pomodoroCount = 0;
+  }
+
+  // 이벤트 5가지 : run, rest, pause, resume, stop
+  void run() {
+    setState(() {
+      _timerStatus = TimerStatus.running;
+      print("[=>] " + _timerStatus.toString());
+      runTimer(); // 타이머 실행 함수
+    });
+  }
+
+  void rest() {
+    setState(() {
+      _timer = REST_SECONDS;
+      _timerStatus = TimerStatus.resting;
+      print("[=>] " + _timerStatus.toString());
+    });
+  }
+
+  void pause() {
+    setState(() {
+      _timerStatus = TimerStatus.paused;
+      print("[=>] " + _timerStatus.toString());
+    });
+  }
+
+  void resume() {
+    run();
+  }
+
+  void stop() {
+    setState(() {
+      _timer = WORK_SECONDS;
+      _timerStatus = TimerStatus.stopped;
+      print("[=>] " + _timerStatus.toString());
+    });
+  }
+
+  void runTimer() async {
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
+      //switch case문으로 5가지 이벤트 처리해주기
+      switch (_timerStatus) {
+        // paused 일때 : 취소
+        case TimerStatus.paused:
+          t.cancel();
+          break;
+        // stopped 일때 : 취소
+        case TimerStatus.stopped:
+          t.cancel();
+          break;
+        // running 일때 : _timer를 1씩 감소하고 _timer가 0이면 rest()메서드 실행
+        case TimerStatus.running:
+          if (_timer <= 0) {
+            print("작업 완료");
+            rest();
+          } else {
+            setState(() {
+              _timer -= 1;
+            });
+          }
+          break;
+        // resting 일때 : _timer를 1씩 감소하고 _timer가 0이면 뽀모도로 갯수 +1하고 stop()메서드 실행
+        case TimerStatus.resting:
+          if (_timer <= 0) {
+            setState(() {
+              _pomodoroCount += 1;
+            });
+            print("오늘 $_pomodoroCount 개의 뽀모도로를 달성했습니다.");
+            t.cancel();
+            stop();
+          } else {
+            setState(() {
+              _timer -= 1;
+            });
+          }
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // 1. 타이머 돌아가고 있을 때
