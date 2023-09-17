@@ -41,7 +41,7 @@ class _TimerScreenState extends State<TimerScreen> {
     final List<Widget> _stoppedButtons = [
       ElevatedButton(
         child: Text(
-          'ㄴ',
+          'Start',
           style: TextStyle(
               color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 16),
         ),
