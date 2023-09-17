@@ -30,7 +30,7 @@ class _TimerScreenState extends State<TimerScreen> {
     super.initState();
     //_timerStatus의 초기상태는 정지
     _timerStatus = TimerStatus.stopped;
-    showToast(_timerStatus.toString());
+    print(_timerStatus.toString());
     //_timer의 초기상태는 WORK_SECONDS
     _timer = WORK_SECONDS;
     //_pomodoroCount의 초기상태는 0
@@ -41,7 +41,7 @@ class _TimerScreenState extends State<TimerScreen> {
   void run() {
     setState(() {
       _timerStatus = TimerStatus.running;
-      showToast("[=>] " + _timerStatus.toString());
+      print("[=>] " + _timerStatus.toString());
       runTimer(); // 타이머 실행 함수
     });
   }
@@ -50,14 +50,14 @@ class _TimerScreenState extends State<TimerScreen> {
     setState(() {
       _timer = REST_SECONDS;
       _timerStatus = TimerStatus.resting;
-      showToast("[=>] " + _timerStatus.toString());
+      print("[=>] " + _timerStatus.toString());
     });
   }
 
   void pause() {
     setState(() {
       _timerStatus = TimerStatus.paused;
-      showToast("[=>] " + _timerStatus.toString());
+      print("[=>] " + _timerStatus.toString());
     });
   }
 
@@ -69,7 +69,7 @@ class _TimerScreenState extends State<TimerScreen> {
     setState(() {
       _timer = WORK_SECONDS;
       _timerStatus = TimerStatus.stopped;
-      showToast("[=>] " + _timerStatus.toString());
+      print("[=>] " + _timerStatus.toString());
     });
   }
 
@@ -126,20 +126,25 @@ class _TimerScreenState extends State<TimerScreen> {
         child: Text(
           _timerStatus == TimerStatus.paused ? 'Continue' : 'Pause',
           style: TextStyle(
-              color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 16),
+              color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 35),
         ),
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blue,
+        ),
         onPressed: _timerStatus == TimerStatus.paused ? resume : pause,
       ),
       Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(10),
       ),
       // 포기하기 버튼
       ElevatedButton(
         child: Text(
           'Give up',
           style: TextStyle(
-              color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 16),
+            fontFamily: 'DungGeunMo',
+            fontSize: 35,
+            color: Colors.white,
+          ),
         ),
         style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
         onPressed: stop,
@@ -152,7 +157,10 @@ class _TimerScreenState extends State<TimerScreen> {
         child: Text(
           'Start',
           style: TextStyle(
-              color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 16),
+            fontFamily: 'DungGeunMo',
+            fontSize: 35,
+            color: Colors.white,
+          ),
         ),
         style: ElevatedButton.styleFrom(
             // 휴식 중인건지 정지인건지 구분하기 위해 색 다르게
@@ -165,25 +173,26 @@ class _TimerScreenState extends State<TimerScreen> {
 
     return Scaffold(
         appBar: AppBar(
-            title: Text(
-          'Pomodoro Timer App',
-          style: TextStyle(fontFamily: 'DungGeunMo'),
-        )),
-        backgroundColor:
-            _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,
+          title: Text(
+            'Pomodoro Timer App',
+            style: TextStyle(fontFamily: 'DungGeunMo', fontSize: 25),
+          ),
+          backgroundColor:
+              _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,
+        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.height * 0.4,
               child: Center(
                   child: Text(
                 secondsToString(_timer),
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'DungGeunMo',
-                  fontSize: 48,
+                  fontSize: 70,
                   fontWeight: FontWeight.bold,
                 ),
               )),
