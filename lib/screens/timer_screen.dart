@@ -1,7 +1,9 @@
 // lib/screens/timer_screen.dart
 
 import 'package:flutter/material.dart';
+
 import 'dart:async';
+import 'package:sprintf/sprintf.dart';
 
 enum TimerStatus { running, paused, stopped, resting }
 
@@ -33,6 +35,11 @@ class _TimerScreenState extends State<TimerScreen> {
     _timer = WORK_SECONDS;
     //_pomodoroCount의 초기상태는 0
     _pomodoroCount = 0;
+  }
+
+  //시간 표시를 위해 문자열 포맷팅함수 sprintf를 이용
+  String secondsToString(int seconds) {
+    return sprintf("%02d:%02d", [seconds ~/ 60, seconds % 60]);
   }
 
   // 이벤트 5가지 : run, rest, pause, resume, stop
@@ -122,12 +129,12 @@ class _TimerScreenState extends State<TimerScreen> {
       // 계속하기/일시정지 버튼
       ElevatedButton(
         child: Text(
-          1 == 2 ? 'Continue' : 'Pause',
+          _timerStatus == TimerStatus.paused ? 'Continue' : 'Pause',
           style: TextStyle(
               color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 16),
         ),
         style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-        onPressed: () {},
+        onPressed: _timerStatus == TimerStatus.paused ? resume : pause,
       ),
       Padding(
         padding: EdgeInsets.all(20),
@@ -140,7 +147,7 @@ class _TimerScreenState extends State<TimerScreen> {
               color: Colors.white, fontFamily: 'DungGeunMo', fontSize: 16),
         ),
         style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-        onPressed: () {},
+        onPressed: stop,
       ),
     ];
 
@@ -154,17 +161,21 @@ class _TimerScreenState extends State<TimerScreen> {
         ),
         style: ElevatedButton.styleFrom(
             // 휴식 중인건지 정지인건지 구분하기 위해 색 다르게
-            backgroundColor: 1 == 2 ? Colors.green : Colors.blue),
-        onPressed: () {},
+            backgroundColor: _timerStatus == TimerStatus.resting
+                ? Colors.green
+                : Colors.blue),
+        onPressed: run,
       ),
     ];
 
     return Scaffold(
         appBar: AppBar(
             title: Text(
-          'Pomodoro Timer',
+          'Pomodoro Timer App',
           style: TextStyle(fontFamily: 'DungGeunMo'),
         )),
+        backgroundColor:
+            _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -173,7 +184,7 @@ class _TimerScreenState extends State<TimerScreen> {
               width: MediaQuery.of(context).size.height * 0.6,
               child: Center(
                   child: Text(
-                '00:00',
+                secondsToString(_timer),
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'DungGeunMo',
@@ -183,7 +194,9 @@ class _TimerScreenState extends State<TimerScreen> {
               )),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: 1 == 2 ? Colors.green : Colors.blue,
+                color: _timerStatus == TimerStatus.resting
+                    ? Colors.green
+                    : Colors.blue,
               ),
             ),
             // Row 버튼은 휴식중인지 아닌지 검사헤서 상황에 따라 다른 버튼들 보여줌
@@ -191,9 +204,9 @@ class _TimerScreenState extends State<TimerScreen> {
             // 버튼 있음 ? 참이면 _stoppedButtons 스탑 : 거짓이면 _runningButtons 러닝
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: 1 == 2
+              children: _timerStatus == TimerStatus.resting
                   ? const []
-                  : 1 == 2
+                  : _timerStatus == TimerStatus.stopped
                       ? _stoppedButtons
                       : _runningButtons,
             ),
